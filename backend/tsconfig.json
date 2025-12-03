@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    // Target a modern enough JS version
+    "target": "ES2020",
+
+    // Node-style modules
+    "module": "commonjs",
+    "moduleResolution": "node",
+
+    // Node environment libs
+    "lib": ["ES2020"],
+
+    // Where your TS lives / where JS should go
+    "rootDir": "src",
+    "outDir": "dist",
+
+    // Type definitions (gives you __dirname, process, etc.)
+    "types": ["node"],
+
+    // Good defaults
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"]
+}
