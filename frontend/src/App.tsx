@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import type { DashboardData, WeeklyDay, WeatherDay } from "./types";
 
-const API_BASE =
-  import.meta.env.DEV ? import.meta.env.VITE_API_BASE || "" : "";
+const API_BASE = import.meta.env.DEV ? import.meta.env.VITE_API_BASE || "" : "";
 
 function metersToMiles(meters: number) {
   return meters / 1609.34;
@@ -10,6 +9,20 @@ function metersToMiles(meters: number) {
 
 function kmToMiles(km: number) {
   return km * 0.621371;
+}
+
+function paceKmToMile(pacePerKm: string): string {
+  // pacePerKm is "M:SS" format, convert to pace per mile
+  const parts = pacePerKm.split(":");
+  if (parts.length !== 2) return pacePerKm;
+  const mins = parseInt(parts[0], 10);
+  const secs = parseInt(parts[1], 10);
+  const totalSecsPerKm = mins * 60 + secs;
+  // 1 mile = 1.60934 km, so pace/mile = pace/km * 1.60934
+  const totalSecsPerMile = Math.round(totalSecsPerKm * 1.60934);
+  const newMins = Math.floor(totalSecsPerMile / 60);
+  const newSecs = totalSecsPerMile % 60;
+  return `${newMins}:${newSecs.toString().padStart(2, "0")}`;
 }
 
 function secondsToHMS(sec: number) {
@@ -22,7 +35,7 @@ function secondsToHMS(sec: number) {
 }
 
 function cToF(c: number) {
-  return c * 9 / 5 + 32;
+  return (c * 9) / 5 + 32;
 }
 
 function formatDateShort(iso: string) {
@@ -93,13 +106,9 @@ function RouteMap({ polyline }: { polyline: string }) {
   const spanLng = maxLng - minLng || 0.0001;
 
   const coords = pts.map(([lat, lng]) => {
-    const x =
-      padding +
-      ((lng - minLng) / spanLng) * (width - padding * 2);
+    const x = padding + ((lng - minLng) / spanLng) * (width - padding * 2);
     // invert lat so north is "up"
-    const y =
-      padding +
-      ((maxLat - lat) / spanLat) * (height - padding * 2);
+    const y = padding + ((maxLat - lat) / spanLat) * (height - padding * 2);
     return `${x},${y}`;
   });
 
@@ -120,10 +129,7 @@ function RouteMap({ polyline }: { polyline: string }) {
         ry="12"
         className="route-bg"
       />
-      <polyline
-        points={pointsAttr}
-        className="route-line"
-      />
+      <polyline points={pointsAttr} className="route-line" />
     </svg>
   );
 }
@@ -144,9 +150,12 @@ function App() {
       }
       const json = (await res.json()) as DashboardData;
       setData(json);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error fetching dashboard:", e);
-      setError(e.message ?? "Unknown error");
+      let msg = "Unknown error";
+      if (e instanceof Error) msg = e.message;
+      else if (typeof e === "string") msg = e;
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -169,100 +178,94 @@ function App() {
       <div className="grid">
         {/* Left side: Last activity */}
         <section className="card last-activity">
-  <h2>Last Activity</h2>
-  {loading && !data && <p>Loading…</p>}
-  {error && <p className="error">Error: {error}</p>}
-  {!loading && !last && !error && (
-    <p>No activities found yet.</p>
-  )}
+          <h2>Last Activity</h2>
+          {loading && !data && <p>Loading…</p>}
+          {error && <p className="error">Error: {error}</p>}
+          {!loading && !last && !error && <p>No activities found yet.</p>}
 
-  {last && (
-    <div className="la-content">
-      {last.mapPolyline && (
-        <div className="la-map-wrapper">
-          <RouteMap polyline={last.mapPolyline} />
-        </div>
-      )}
+          {last && (
+            <div className="la-content">
+              {last.mapPolyline && (
+                <div className="la-map-wrapper">
+                  <RouteMap polyline={last.mapPolyline} />
+                </div>
+              )}
 
-      <div className="la-bottom">
-        <div className="la-title">
-          <span className="la-type">{last.type}</span>
-          <span className="la-name">{last.name}</span>
-        </div>
-        <p className="la-date">
-          {formatDateShort(last.startDate)}
-        </p>
+              <div className="la-bottom">
+                <div className="la-title">
+                  <span className="la-type">{last.type}</span>
+                  <span className="la-name">{last.name}</span>
+                </div>
+                <p className="la-date">{formatDateShort(last.startDate)}</p>
 
-        <div className="la-main-stats">
-          <div className="stat">
-            <div className="label">Distance</div>
-            <div className="value">
-              {metersToMiles(last.distanceMeters).toFixed(2)} mi
-            </div>
-          </div>
-          <div className="stat">
-            <div className="label">Time</div>
-            <div className="value">
-              {secondsToHMS(last.movingTimeSec)}
-            </div>
-          </div>
-          <div className="stat">
-            <div className="label">Pace</div>
-            <div className="value">
-              {last.pacePerKm} /km
-            </div>
-          </div>
-          <div className="stat">
-            <div className="label">Elev Gain</div>
-            <div className="value">
-              {Math.round(last.elevGainMeters)} m
-            </div>
-          </div>
-          <div className="stat">
-            <div className="label">Avg HR</div>
-            <div className="value">
-              {last.averageHeartRate
-                ? `${Math.round(last.averageHeartRate)} bpm`
-                : "–"}
-            </div>
-          </div>
-        </div>
-
-        {recent.length > 1 && (
-          <div className="recent">
-            <h3>Recent Activities</h3>
-            <div className="recent-list">
-              {recent.slice(0, 3).map((a) => (
-                <div key={a.id} className="recent-item">
-                  <div className="recent-top">
-                    <span className="recent-type">{a.type}</span>
-                    <span className="recent-name">{a.name}</span>
+                <div className="la-main-stats">
+                  <div className="stat">
+                    <div className="label">Distance</div>
+                    <div className="value">
+                      {metersToMiles(last.distanceMeters).toFixed(2)} mi
+                    </div>
                   </div>
-                  <div className="recent-meta">
-                    <span>
-                      {metersToMiles(a.distanceMeters).toFixed(1)} mi
-                    </span>
-                    <span>{a.pacePerKm} /km</span>
-                    <span>{formatDateShort(a.startDate)}</span>
+                  <div className="stat">
+                    <div className="label">Time</div>
+                    <div className="value">
+                      {secondsToHMS(last.movingTimeSec)}
+                    </div>
+                  </div>
+                  <div className="stat">
+                    <div className="label">Pace</div>
+                    <div className="value">
+                      {paceKmToMile(last.pacePerKm)} /mi
+                    </div>
+                  </div>
+                  <div className="stat">
+                    <div className="label">Elev Gain</div>
+                    <div className="value">
+                      {Math.round(last.elevGainMeters)} m
+                    </div>
+                  </div>
+                  <div className="stat">
+                    <div className="label">Avg HR</div>
+                    <div className="value">
+                      {last.averageHeartRate
+                        ? `${Math.round(last.averageHeartRate)} bpm`
+                        : "–"}
+                    </div>
                   </div>
                 </div>
-              ))}
+
+                {recent.length > 1 && (
+                  <div className="recent">
+                    <h3>Recent Activities</h3>
+                    <div className="recent-list">
+                      {recent.slice(0, 3).map((a) => (
+                        <div key={a.id} className="recent-item">
+                          <div className="recent-top">
+                            <span className="recent-type">{a.type}</span>
+                            <span className="recent-name">{a.name}</span>
+                          </div>
+                          <div className="recent-meta">
+                            <span>
+                              {metersToMiles(a.distanceMeters).toFixed(1)} mi
+                            </span>
+                            <span>{paceKmToMile(a.pacePerKm)} /mi</span>
+                            <span>{formatDateShort(a.startDate)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-    </div>
-  )}
-</section>        
+          )}
+        </section>
 
         {/* Right top: Weekly summary + race countdown */}
         <section className="card weekly">
           <div className="weekly-header">
             <h2>This Week</h2>
             {weekly && (
-              <span className="week-range">
-                from {weekly.startOfWeek}
-              </span>
+              <span className="week-range">from {weekly.startOfWeek}</span>
             )}
           </div>
           {weekly ? (
@@ -296,15 +299,12 @@ function App() {
               <h3>Next Race</h3>
               <p className="race-name">{race.name}</p>
               <p className="race-date">
-                {new Date(race.date + "T00:00:00").toLocaleDateString(
-                  "en-US",
-                  {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  }
-                )}
+                {new Date(race.date + "T00:00:00").toLocaleDateString("en-US", {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
               </p>
               <p className="race-countdown">
                 {race.daysUntil > 0
@@ -366,8 +366,13 @@ function WeatherDayCard({ day }: { day: WeatherDay }) {
     ? `https://openweathermap.org/img/wn/${day.icon}@2x.png`
     : null;
 
-  const isToday =
-    new Date(day.date).toDateString() === new Date().toDateString();
+  // Compare as local date (day.date is "YYYY-MM-DD")
+  const now = new Date();
+  const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(now.getDate()).padStart(2, "0")}`;
+  const isToday = day.date === localDate;
 
   return (
     <div className={`weather-day ${isToday ? "weather-today" : ""}`}>
@@ -398,10 +403,7 @@ function WeeklyGoalBar({
     <div className="weekly-goal">
       <div className="wg-label">Weekly Mileage</div>
       <div className="wg-bar">
-        <div
-          className="wg-bar-fill"
-          style={{ width: `${pct}%` }}
-        />
+        <div className="wg-bar-fill" style={{ width: `${pct}%` }} />
       </div>
       <div className="wg-text">
         {totalMiles.toFixed(1)} / {goalMiles} mi

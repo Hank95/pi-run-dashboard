@@ -17,7 +17,7 @@ body {
 
 .app {
   height: 100%;
-  padding: 24px;
+  padding: 16px;
   box-sizing: border-box;
 }
 
@@ -25,7 +25,7 @@ body {
   display: grid;
   height: 100%;
   grid-template-columns: 3fr 2fr;
-  grid-template-rows: 2fr 1.2fr;
+  grid-template-rows: 1fr auto;
   gap: 16px;
 }
 
@@ -35,6 +35,9 @@ body {
   padding: 16px 20px;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
   border: 1px solid rgba(148, 163, 184, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .card h2 {
@@ -81,11 +84,15 @@ body {
 
 .la-date {
   color: #9ca3af;
-  margin-bottom: 16px;
+  margin: 0 0 10px;
+  font-size: 0.85rem;
 }
 
 .la-main-stats {
   margin-bottom: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 16px;
 }
 
 .la-bottom {
@@ -141,8 +148,9 @@ body {
   display: flex;
   align-items: flex-end;
   gap: 10px;
-  height: 130px;
+  height: 100px;
   margin-top: 8px;
+  flex-shrink: 0;
 }
 
 .bar-col {
@@ -193,17 +201,11 @@ body {
 
 .weather-row {
   display: flex;
-  gap: 10px;
-  overflow-x: auto;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
-.weather-day {
-  min-width: 80px;
-  padding: 8px;
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.8);
-  text-align: center;
-}
 
 .wd-day {
   font-size: 0.8rem;
@@ -211,8 +213,8 @@ body {
 }
 
 .wd-icon img {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
 }
 
 .wd-temp {
@@ -236,7 +238,8 @@ body {
 }
 
 .la-map-wrapper {
-  flex: 0 0 55%;
+  flex: 0 0 auto;
+  max-height: 45%;
   margin-bottom: 10px;
 }
 
@@ -260,9 +263,14 @@ body {
 }
 
 .recent {
-  margin-top: 6px;
-  padding-top: 6px;
+  margin-top: auto;
+  padding-top: 10px;
   border-top: 1px solid rgba(51, 65, 85, 0.8);
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .recent h3 {
@@ -274,9 +282,13 @@ body {
 }
 
 .recent-list {
-  max-height: 90px;      /* tweak until all 2–3 rows are visible on the Pi */
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .recent-item {
@@ -349,15 +361,16 @@ body {
 }
 
 .weather-day {
-  min-width: 80px;
-  padding: 8px;
-  border-radius: 12px;
+  flex: 1;
+  min-width: 60px;
+  padding: 6px;
+  border-radius: 10px;
   background: rgba(15, 23, 42, 0.8);
   text-align: center;
   border: 1px solid transparent;
 }
 
 .weather-today {
-  border-color: rgba(34, 197, 94, 0.8);  /* green rim for today */
+  border-color: rgba(34, 197, 94, 0.8);
   box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.3);
 }
