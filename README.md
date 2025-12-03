@@ -1,26 +1,17 @@
-# Pi Run Dashboard  
-*A wall-mounted Strava-powered running dashboard for Raspberry Pi*
+# Pi Run Dashboard
+
+_A wall-mounted Strava-powered running dashboard for Raspberry Pi_
 
 This project turns a Raspberry Pi into a dedicated running metrics dashboard that displays:
 
-- Your latest Strava activity  
-- GPS route map  
-- Weekly mileage and goal tracking  
-- Recent activities  
-- 6-day weather forecast  
-- Race countdown  
+- Your latest Strava activity
+- GPS route map
+- Weekly mileage and goal tracking
+- Recent activities
+- 6-day weather forecast
+- Race countdown
 
 The dashboard runs as a single Node/Express backend that also serves a Vite/React frontend, making it perfect for an office, home gym, or cabin display.
-
----
-
-## Screenshot
-
-(Add your screenshot here.)
-
-Example:
-
-![Dashboard Screenshot](./screenshot.png)
 
 ---
 
@@ -28,61 +19,64 @@ Example:
 
 ### Strava Integration
 
-- OAuth login with Strava  
-- Fetches last run and recent activities  
+- OAuth login with Strava
+- Fetches last run and recent activities
 - Displays:
-  - Distance  
-  - Pace  
-  - Moving time  
-  - Elevation gain  
-  - Heart rate  
-  - Route polyline as SVG map  
+  - Distance
+  - Pace
+  - Moving time
+  - Elevation gain
+  - Heart rate
+  - Route polyline as SVG map
 
 ### Weekly Summary
 
-- Total mileage  
-- Elevation gain  
-- Per-day mileage bars  
-- Weekly mileage goal bar  
+- Total mileage
+- Elevation gain
+- Per-day mileage bars
+- Weekly mileage goal bar
 
 ### Weather Forecast
 
-- 6-day forecast  
-- High/low temps  
-- Icons + conditions  
-- Today highlighted  
+- 6-day forecast
+- High/low temps
+- Icons + conditions
+- Today highlighted
 
 ### Race Countdown
 
-- Days remaining  
-- Race name + date  
+- Days remaining
+- Race name + date
 
 ### UI
 
-- Clean dark theme  
-- CSS grid layout  
-- Optimized for 1080p displays  
+- Clean dark theme
+- CSS grid layout
+- Optimized for 1080p displays
 
 ---
 
 ## Tech Stack
 
 ### Frontend
-- React + TypeScript  
-- Vite  
-- Custom CSS  
-- SVG route renderer  
+
+- React + TypeScript
+- Vite
+- Custom CSS
+- SVG route renderer
 
 ### Backend
-- Node.js + Express  
-- TypeScript  
-- Strava API  
-- OpenWeather API  
-- dotenv  
+
+- Node.js + Express
+- TypeScript
+- Strava API
+- OpenWeather API
+- dotenv
 
 ### Hardware
-- Raspberry Pi 4/5  
-- Chromium in kiosk mode  
+
+- Raspberry Pi 4/5
+- Chromium in kiosk mode
 
 ---
 
@@ -123,7 +117,7 @@ cd pi-run-dashboard
 
 ## 2. Strava API Setup
 
-Go to: https://www.strava.com/settings/api  
+Go to: https://www.strava.com/settings/api
 
 Set:
 
@@ -133,8 +127,8 @@ Authorization Callback Domain: hppi.local
 
 Save:
 
-- STRAVA_CLIENT_ID  
-- STRAVA_CLIENT_SECRET  
+- STRAVA_CLIENT_ID
+- STRAVA_CLIENT_SECRET
 
 Add them to backend `.env`.
 
@@ -143,11 +137,11 @@ Add them to backend `.env`.
 ## 3. OpenWeather Setup
 
 Create an API key:  
-https://openweathermap.org/api  
+https://openweathermap.org/api
 
 Save:
 
-- WEATHER_API_KEY  
+- WEATHER_API_KEY
 
 ---
 
@@ -271,12 +265,12 @@ Add:
 
 ## Roadmap
 
-- HRV + Garmin wellness metrics  
-- Training load metrics  
-- Elevation profile chart  
-- Multi-run comparison  
-- WebSocket live updates  
-- LED / e-paper integrations  
+- HRV + Garmin wellness metrics
+- Training load metrics
+- Elevation profile chart
+- Multi-run comparison
+- WebSocket live updates
+- LED / e-paper integrations
 
 ---
 
